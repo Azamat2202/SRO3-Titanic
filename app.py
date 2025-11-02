@@ -18,4 +18,4 @@ demo = gr.Interface(fn=lambda x: predict([float(i) for i in x.split(',')]),
                     outputs=outputs,
                     title="🌸 Titanic Predictor")
 
-demo.launch()
+demo.launch(server_name="0.0.0.0", server_port=10000)
