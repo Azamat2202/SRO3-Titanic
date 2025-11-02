@@ -7,20 +7,23 @@ model = joblib.load("model.pkl")
 
 # Функция для предсказания
 def predict(features):
-    prediction = model.predict([features])
-    return f"Результат предсказания: {prediction[0]}"
+    try:
+        values = [float(i) for i in features.split(",")]
+        prediction = model.predict([values])
+        return f"Результат предсказания: {prediction[0]}"
+    except Exception as e:
+        return f"Ошибка: {str(e)}"
 
-# Интерфейс
-inputs = gr.Textbox(label="Введите данные через запятую (пример: 5.1, 3.5, 1.4, 0.2)")
-outputs = gr.Textbox(label="Результат")
-
+# Интерфейс Gradio
 demo = gr.Interface(
-    fn=lambda x: predict([float(i) for i in x.split(',')]),
-    inputs=inputs,
-    outputs=outputs,
+    fn=predict,
+    inputs=gr.Textbox(label="Введите данные через запятую (пример: 5.1, 3.5, 1.4, 0.2)"),
+    outputs=gr.Textbox(label="Результат"),
     title="🌸 Titanic Predictor"
 )
 
-# 🧠 Вот здесь важно:
-port = int(os.environ.get("PORT", 10000))
+# Получаем порт от Render
+port = int(os.getenv("PORT", 10000))
+
+# Запускаем сервер
 demo.launch(server_name="0.0.0.0", server_port=port)
